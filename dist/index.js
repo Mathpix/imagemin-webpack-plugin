@@ -121,6 +121,8 @@ class ImageminPlugin {
       // Create a throttle object which will limit the number of concurrent processes running
       const throttle = (0, _asyncThrottle2.default)(this.options.maxConcurrency);
 
+      const start = new Date().getTime();
+      console.log("Start optimize");
       try {
         // Optimise all images at the same time (throttled to maxConcurrency)
         // and await until all of them to complete
@@ -132,6 +134,9 @@ class ImageminPlugin {
         // if at any point we hit a snag, pass the error on to webpack
         callback(err);
       }
+      const end = new Date().getTime();
+      const time = end - start;
+      console.log('Summary Optimize time: ' + time + 'ms');
     };
 
     // Check if the webpack 4 plugin API is available
@@ -164,6 +169,7 @@ class ImageminPlugin {
       if (testFunction(filename, assetSource)) {
         // Use the helper function to get the file from cache if possible, or
         // run the optimize function and store it in the cache when done
+        // console.log('[filename]=>', filename);
         let optimizedImageBuffer = await (0, _helpers.getFromCacheIfPossible)(cacheFolder, assetSource, () => {
           return (0, _helpers.optimizeImage)(assetSource, _path2.default.basename(filename), this.options);
         });
